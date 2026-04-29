@@ -1,10 +1,9 @@
 package controller
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/haidaqn/go-ecommerce-backend-api/internal/service"
+	"github.com/haidaqn/go-ecommerce-backend-api/pkg/response"
 )
 
 type UserController struct {
@@ -24,13 +23,8 @@ func (uc *UserController) GetInfoUser(c *gin.Context) {
 
 	data, err := uc.userService.GetInfoUser(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": err.Error(),
-		})
+		response.ErrorResponse(c, response.CodeInternalServer, err.Error())
 		return
 	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"message": data,
-	})
+	response.SuccessReponse(c, response.CodeSuccess, data, nil)
 }
