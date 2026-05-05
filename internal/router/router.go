@@ -1,26 +1,27 @@
 package routers
 
-import (
-	"github.com/gin-gonic/gin"
-	"github.com/haidaqn/go-ecommerce-backend-api/internal/controller"
-	"github.com/haidaqn/go-ecommerce-backend-api/internal/middleware"
-)
+// import (
+// 	"github.com/gin-gonic/gin"
+// 	"github.com/haidaqn/go-ecommerce-backend-api/internal/controller"
+// 	"github.com/haidaqn/go-ecommerce-backend-api/internal/middleware"
+// )
 
-func NewRoute() *gin.Engine {
-	r := gin.Default()
+// func NewRoute() *gin.Engine {
+// 	r := gin.Default()
+// 	r.SetTrustedProxies([]string{"192.168.1.2"})
+// 	go middleware.CleanupClient()
 
-	go middleware.CleanupClient()
+// 	r.Use(middleware.LoggerMiddleware(),
+// 		middleware.RateLimitingMiddleware(),
+// 		middleware.CorsMiddleware(),
+// 		middleware.ApiKeyMiddleware(),
+// 		middleware.AuthenticateMiddleware(),
+// 		middleware.ErrorHandlerMiddleware(),
+// 	)
 
-	r.Use(middleware.LoggerMiddleware(),
-		middleware.RateLimitingMiddleware(),
-		middleware.CorsMiddleware(),
-		middleware.ApiKeyMiddleware(),
-		middleware.AuthenticateMiddleware(),
-		middleware.ErrorHandlerMiddleware())
+// 	api_v1 := r.Group("/api/v1")
 
-	api_v1 := r.Group("/api/v1")
+// 	api_v1.GET("/user/:id", controller.NewUserController().GetInfoUser)
 
-	api_v1.GET("/user/:id", controller.NewUserController().GetInfoUser)
-
-	return r
-}
+// 	return r
+// }

@@ -1,16 +1,21 @@
 package middleware
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func ApiKeyMiddleware() gin.HandlerFunc {
-	expectedKey := os.Getenv("API_KEY")
-	if expectedKey == "" {
-		expectedKey = "api-key"
+	err := godotenv.Load()
+	if err != nil {
+		fmt.Println("Error loading .env file:", err)
+		return func(ctx *gin.Context) {
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Missing X-API-KEY"})
+		}
 	}
 
 	return func(ctx *gin.Context) {
@@ -20,7 +25,7 @@ func ApiKeyMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		if apiKey != expectedKey {
+		if apiKey != os.Getenv("API_KEY") {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid API KEY"})
 			return
 		}

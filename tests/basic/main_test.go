@@ -6,8 +6,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func AddOne(x int) int {
+	return x + 1
+}
+
 func TestA(t *testing.T) {
-	actual := 2
-	expected := 2
-	assert.Equal(t, expected, actual, "Expected %d, but got %d", expected, actual)
+	assert.Equal(t, AddOne(1), 2, "AddOne(1) should be 2")
 }

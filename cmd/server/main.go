@@ -1,11 +1,8 @@
 package main
 
-import (
-	routers "github.com/haidaqn/go-ecommerce-backend-api/internal/router"
-)
+import "github.com/haidaqn/go-ecommerce-backend-api/internal/initialize"
 
 func main() {
-	r := routers.NewRoute()
 
-	r.Run(":3000")
+	initialize.Run()
 }
