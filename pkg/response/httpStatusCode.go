@@ -9,6 +9,7 @@ const (
 	CodeSendOTPErr     = 40002 // Send OTP error
 	CodeEmailExist     = 50001 // Email already exists
 	CodeInternalServer = 50002 // Internal server error
+	CodeUnauthorized   = 40101 // Unauthorized
 )
 
 var msg = map[int]string{
@@ -20,4 +21,5 @@ var msg = map[int]string{
 	CodeInternalServer: "Internal server error",
 	CodeSendOTPErr:     "Send OTP error",
 	CodeInvalidParams:  "Invalid parameters",
+	CodeUnauthorized:   "Unauthorized",
 }

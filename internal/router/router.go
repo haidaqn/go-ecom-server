@@ -11,8 +11,12 @@ func NewRoute() *gin.Engine {
 
 	go middleware.CleanupClient()
 
-	r.Use(middleware.LoggerMiddleware(), middleware.RateLimitingMiddleware())
-	// r.Use(middleware.LoggerMiddleware(), middleware.ApiKeyMiddleware(), middleware.RateLimitingMiddleware())
+	r.Use(middleware.LoggerMiddleware(),
+		middleware.RateLimitingMiddleware(),
+		middleware.CorsMiddleware(),
+		middleware.ApiKeyMiddleware(),
+		middleware.AuthenticateMiddleware(),
+		middleware.ErrorHandlerMiddleware())
 
 	api_v1 := r.Group("/api/v1")
 
