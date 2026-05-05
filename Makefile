@@ -1,4 +1,3 @@
-# name app
 APP_NAME=server
 APP_PATH=cmd/$(APP_NAME)/main.go
 

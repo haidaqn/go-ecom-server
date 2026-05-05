@@ -15,7 +15,7 @@ type User struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
-	Roles     []Role         `gorm:"many2many:roles" json:"roles"`
+	Roles     []Role         `gorm:"many2many:user_roles" json:"roles"`
 }
 
 func (u *User) TableName() string {

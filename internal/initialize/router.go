@@ -13,7 +13,7 @@ func InitRouter() *gin.Engine {
 	go middleware.CleanupClient()
 
 	r.Use(
-		middleware.LoggerMiddleware(),
+		// middleware.LoggerMiddleware(),
 		middleware.RateLimitingMiddleware(),
 		middleware.CorsMiddleware(),
 		middleware.ApiKeyMiddleware(),

@@ -42,8 +42,8 @@ type MySQLSetting struct {
 type LoggerSetting struct {
 	Level      string `mapstructure:"level"`
 	File       string `mapstructure:"file"`
-	MaxSize    int    `mapstructure:"max_size"`
-	MaxAge     int    `mapstructure:"max_age"`
-	MaxBackups int    `mapstructure:"max_backups"`
+	MaxSize    int    `mapstructure:"maxSize"`
+	MaxAge     int    `mapstructure:"maxAge"`
+	MaxBackups int    `mapstructure:"maxBackups"`
 	Compress   bool   `mapstructure:"compress"`
 }
