@@ -2,28 +2,54 @@ package initialize
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/haidaqn/go-ecommerce-backend-api/internal/controller"
-	"github.com/haidaqn/go-ecommerce-backend-api/internal/middleware"
+	"github.com/haidaqn/go-ecommerce-backend-api/global"
+	routers "github.com/haidaqn/go-ecommerce-backend-api/internal/router"
 )
 
 func InitRouter() *gin.Engine {
-	r := gin.Default()
-	r.SetTrustedProxies([]string{"192.168.1.2"})
+	// r := gin.Default()
+	// r.SetTrustedProxies([]string{"192.168.1.2"})
 
-	go middleware.CleanupClient()
+	// go middleware.CleanupClient()
 
-	r.Use(
-		// middleware.LoggerMiddleware(),
-		middleware.RateLimitingMiddleware(),
-		middleware.CorsMiddleware(),
-		middleware.ApiKeyMiddleware(),
-		middleware.AuthenticateMiddleware(),
-		middleware.ErrorHandlerMiddleware(),
-	)
+	// r.Use(
+	// 	// middleware.LoggerMiddleware(),
+	// 	middleware.RateLimitingMiddleware(),
+	// 	middleware.CorsMiddleware(),
+	// 	middleware.ApiKeyMiddleware(),
+	// 	middleware.AuthenticateMiddleware(),
+	// 	middleware.ErrorHandlerMiddleware(),
+	// )
 
-	api_v1 := r.Group("/api/v1")
+	var r *gin.Engine
+	if global.Config.Server.Mode == "dev" {
+		gin.SetMode(gin.DebugMode)
+		gin.ForceConsoleColor()
+		r = gin.Default()
+	} else {
+		gin.SetMode(gin.ReleaseMode)
+		r = gin.New()
+	}
 
-	api_v1.GET("/user/:id", controller.NewUserController().GetInfoUser)
+	adminRouter := routers.RouterGroupApp.Admin
+	userRouter := routers.RouterGroupApp.User
+	authRouter := routers.RouterGroupApp.Auth
+
+	MainGroup := r.Group("/api/v1")
+	{
+		MainGroup.GET("/health", func(c *gin.Context) {
+			c.JSON(200, gin.H{"status": "ok"})
+		})
+	}
+	{
+		userRouter.InitUserRouter(MainGroup)
+	}
+	{
+		adminRouter.InitUserRouter(MainGroup)
+	}
+	{
+		authRouter.InitAuthRouter(MainGroup)
+	}
 
 	return r
 }
