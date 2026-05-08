@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: ecommerce_go
+      MYSQL_USER: root
+      MYSQL_PASSWORD: Haidang2003x@
+    ports:
+      - "3306:3306"
+    volumes:
+      - ~/docker/mysql_data:/var/lib/mysql
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: redis
+    ports:
+      - "6381:6379" # map port host 6381 -> container redis 6379
+    restart: always
+    volumes:
+      - ~/docker/redis_data:/data
+    command: [ "redis-server", "--appendonly", "yes" ]
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.3.2
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - kafka-net
+  kafka:
+    image: confluentinc/cp-kafka:7.3.2
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - kafka-net
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: kafka-cluster
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092 # use docker network
+    depends_on:
+      - kafka
+    networks:
+      - kafka-net
+
+  go_ecommerce_backend_api:
+    container_name: go_ecommerce_backend_api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - mysql
+      - redis
+      - kafka
+    ports:
+      - "8082:8082"
+
+volumes:
+  mysql_data:
+    driver: local
+  kafka-data:
+  redis_data:
+
+
+networks:
+  kafka-net:
+    driver: bridge
