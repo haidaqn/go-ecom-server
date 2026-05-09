@@ -41,7 +41,7 @@ func getKafkaReader(
 		Brokers:     brokers,
 		GroupID:     groupID,
 		Topic:       topic,
-		StartOffset: kafka.FirstOffset,
+		StartOffset: kafka.LastOffset, // không đọc msg cũ
 	})
 }
 
@@ -52,12 +52,12 @@ func getKafkaWriter(
 
 	return &kafka.Writer{
 		Addr:         kafka.TCP(kafkaURL),
-		Topic:        topic,
-		Balancer:     &kafka.LeastBytes{},
-		RequiredAcks: kafka.RequireAll,
-		BatchSize:    1, // số lượng message gửi cùng lúc
-		BatchTimeout: 0, // thời gian chờ gửi message
-		Async : false, // true: gửi message không đợi response, false: đợi response
+		Topic:        topic,               // tên topic để gửi message
+		Balancer:     &kafka.RoundRobin{}, // phân phối message đến partition có ít dữ liệu nhất
+		RequiredAcks: kafka.RequireAll,    // đảm bảo message được ghi vào tất cả replica trước khi xác nhận
+		BatchSize:    1,                   // số lượng message gửi cùng lúc
+		BatchTimeout: 0,                   // thời gian chờ gửi message
+		Async:        false,               // true: gửi message không đợi response, false: đợi response
 	}
 }
 
