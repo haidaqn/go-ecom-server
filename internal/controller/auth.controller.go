@@ -5,23 +5,19 @@ import (
 	"github.com/haidaqn/go-ecommerce-backend-api/internal/service"
 )
 
-type IAuthController interface {
-	Register(c *gin.Context)
-}
-
-type authController struct {
+type AuthController struct {
 	authService service.IAuthService
 }
 
-func NewAuthController(authService service.IAuthService) IAuthController {
-	return &authController{
+func NewAuthController(authService service.IAuthService) *AuthController {
+	return &AuthController{
 		authService: authService,
 	}
 }
 
-func (a *authController) Register(c *gin.Context) {
+func (a *AuthController) Register(c *gin.Context) {
 	type request struct {
-		Email   string `json:"email" binding:"required,email"`
+		Email    string `json:"email" binding:"required,email"`
 		Password string `json:"password" binding:"required"`
 	}
 

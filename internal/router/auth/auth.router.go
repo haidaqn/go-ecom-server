@@ -2,40 +2,23 @@ package auth
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/haidaqn/go-ecommerce-backend-api/internal/controller"
-	"github.com/haidaqn/go-ecommerce-backend-api/internal/repo"
-	"github.com/haidaqn/go-ecommerce-backend-api/internal/service"
+	"github.com/haidaqn/go-ecommerce-backend-api/internal/wire"
 )
 
 type AuthRouter struct {
-	authController controller.IAuthController
-}
-
-func (a *AuthRouter) ensureDependencies() {
-	if a.authController != nil {
-		return
-	}
-
-	userRepo := repo.NewUserRepository()
-	userService := service.NewUserService(userRepo)
-	authService := service.NewAuthService(userService)
-	a.authController = controller.NewAuthController(authService)
-}
-
-func notImplementedHandler(c *gin.Context) {
-	c.JSON(501, gin.H{"message": "not implemented"})
 }
 
 func (a *AuthRouter) InitAuthRouter(Router *gin.RouterGroup) {
-	a.ensureDependencies()
+
+	authController, _ := wire.InitAuthController()
 
 	authRouterPublic := Router.Group("auth")
 	// authRouterPublic.Use(Limiter())
 	{
-		authRouterPublic.POST("/register", a.authController.Register)
-		authRouterPublic.POST("/login", notImplementedHandler)
-		authRouterPublic.POST("/resend-otp", notImplementedHandler)
-		authRouterPublic.POST("/otp", notImplementedHandler)
+		authRouterPublic.POST("/register", authController.Register)
+		authRouterPublic.POST("/login")
+		authRouterPublic.POST("/resend-otp")
+		authRouterPublic.POST("/otp")
 	}
 
 	authRouterPrivate := Router.Group("auth")
@@ -43,6 +26,6 @@ func (a *AuthRouter) InitAuthRouter(Router *gin.RouterGroup) {
 	// authRouterPrivate.Use(Authe())
 	// authRouterPrivate.Use(Permission())
 	{
-		authRouterPrivate.POST("/refresh", notImplementedHandler)
+		authRouterPrivate.POST("/refresh")
 	}
 }

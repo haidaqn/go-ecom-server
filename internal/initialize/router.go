@@ -3,6 +3,7 @@ package initialize
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/haidaqn/go-ecommerce-backend-api/global"
+	"github.com/haidaqn/go-ecommerce-backend-api/internal/middlewares"
 	routers "github.com/haidaqn/go-ecommerce-backend-api/internal/router"
 )
 
@@ -17,8 +18,15 @@ func InitRouter() *gin.Engine {
 		r = gin.New()
 	}
 
-	adminRouter := routers.RouterGroupApp.Admin
-	userRouter := routers.RouterGroupApp.User
+	r.Use(
+		middlewares.ValidatorMiddleware(),
+		// middlewares.ApiKeyMiddleware(),
+		// middlewares.LoggerMiddleware(),
+		// middlewares.ErrorHandlerMiddleware(),
+		// middlewares.CorsMiddleware(),
+		// middlewares.AuthenticateMiddleware(),
+	)
+
 	authRouter := routers.RouterGroupApp.Auth
 
 	MainGroup := r.Group("/api/v1")
@@ -26,12 +34,6 @@ func InitRouter() *gin.Engine {
 		MainGroup.GET("/health", func(c *gin.Context) {
 			c.JSON(200, gin.H{"status": "ok"})
 		})
-	}
-	{
-		userRouter.InitUserRouter(MainGroup)
-	}
-	{
-		adminRouter.InitUserRouter(MainGroup)
 	}
 	{
 		authRouter.InitAuthRouter(MainGroup)
