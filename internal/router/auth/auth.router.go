@@ -10,7 +10,7 @@ type AuthRouter struct {
 
 func (a *AuthRouter) InitAuthRouter(Router *gin.RouterGroup) {
 
-	authController, _ := wire.InitAuthController()
+	authController, _ := wire.InitAuthRouteHandler()
 
 	authRouterPublic := Router.Group("auth")
 	// authRouterPublic.Use(Limiter())

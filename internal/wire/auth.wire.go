@@ -1,3 +1,5 @@
+//go:build wireinject
+
 package wire
 
 import (
@@ -7,7 +9,7 @@ import (
 	"github.com/haidaqn/go-ecommerce-backend-api/internal/service"
 )
 
-func InitAuthController() (*controller.AuthController, error) {
+func InitAuthRouteHandler() (*controller.AuthController, error) {
 	wire.Build(
 		repo.NewUserRepository,
 		service.NewUserService,
