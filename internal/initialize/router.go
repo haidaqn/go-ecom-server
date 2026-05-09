@@ -7,20 +7,6 @@ import (
 )
 
 func InitRouter() *gin.Engine {
-	// r := gin.Default()
-	// r.SetTrustedProxies([]string{"192.168.1.2"})
-
-	// go middleware.CleanupClient()
-
-	// r.Use(
-	// 	// middleware.LoggerMiddleware(),
-	// 	middleware.RateLimitingMiddleware(),
-	// 	middleware.CorsMiddleware(),
-	// 	middleware.ApiKeyMiddleware(),
-	// 	middleware.AuthenticateMiddleware(),
-	// 	middleware.ErrorHandlerMiddleware(),
-	// )
-
 	var r *gin.Engine
 	if global.Config.Server.Mode == "dev" {
 		gin.SetMode(gin.DebugMode)

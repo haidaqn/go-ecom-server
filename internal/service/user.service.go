@@ -2,16 +2,20 @@ package service
 
 import "github.com/haidaqn/go-ecommerce-backend-api/internal/repo"
 
-type UserService struct {
-	userRepo *repo.UserRepo
+type IUservices interface {
+	GetUserByEmail(email string) bool
 }
 
-func NewUserService() *UserService {
-	return &UserService{
-		userRepo: repo.NewUserRepo(),
+type userService struct {
+	userRepository repo.IUserRepository
+}
+
+func NewUserService(userRepository repo.IUserRepository) IUservices {
+	return &userService{
+		userRepository: userRepository,
 	}
 }
 
-func (us *UserService) GetInfoUser(id string) (string, error) {
-	return us.userRepo.GetInfoUser(id)
+func (u *userService) GetUserByEmail(email string) bool {
+	return u.userRepository.GetUserByEmail(email)
 }

@@ -30,7 +30,7 @@ func InitMySql() {
 	global.Logger.Info("Connected to MySQL database")
 	global.MySQL = db
 	SetPool()
-	MigrateTables()
+	// MigrateTables()
 }
 
 func SetPool() {

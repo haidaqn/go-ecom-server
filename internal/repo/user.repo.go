@@ -1,23 +1,15 @@
 package repo
 
-import (
-	"errors"
-	"strconv"
-)
-
-type UserRepo struct {
+type IUserRepository interface {
+	GetUserByEmail(email string) bool
 }
 
-func NewUserRepo() *UserRepo {
-	return &UserRepo{}
+type userRepository struct{}
+
+func NewUserRepository() IUserRepository {
+	return &userRepository{}
 }
 
-func (ur *UserRepo) GetInfoUser(id string) (string, error) {
-	// id không phải số thì trả về lỗi
-	_, err := strconv.Atoi(id)
-	if err != nil {
-		return "", errors.New("id must be a number")
-	}
-
-	return "Hai Dang Phuong, " + id, nil
+func (ur *userRepository) GetUserByEmail(email string) bool {
+	return true
 }
