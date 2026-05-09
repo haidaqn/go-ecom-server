@@ -22,7 +22,7 @@ func NewAuthController(authService service.IAuthService) IAuthController {
 func (a *authController) Register(c *gin.Context) {
 	type request struct {
 		Email   string `json:"email" binding:"required,email"`
-		Purpose string `json:"purpose" binding:"required"`
+		Password string `json:"password" binding:"required"`
 	}
 
 	var req request
@@ -31,7 +31,7 @@ func (a *authController) Register(c *gin.Context) {
 		return
 	}
 
-	success := a.authService.Register(req.Email, req.Purpose)
+	success := a.authService.Register(req.Email, req.Password)
 	if success {
 		c.JSON(200, gin.H{"message": "Registration successful"})
 	} else {
