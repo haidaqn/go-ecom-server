@@ -8,6 +8,7 @@ import (
 	"github.com/haidaqn/go-ecommerce-backend-api/internal/po"
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
+	"gorm.io/gen"
 	"gorm.io/gorm"
 )
 
@@ -30,6 +31,7 @@ func InitMySql() {
 	global.Logger.Info("Connected to MySQL database")
 	global.MySQL = db
 	SetPool()
+	genTablesDAO()
 	// MigrateTables()
 }
 
@@ -51,4 +53,16 @@ func MigrateTables() {
 	err := global.MySQL.AutoMigrate(&po.User{}, &po.Role{})
 	checkErrorPanic(err, "Failed to migrate tables")
 	global.Logger.Info("Tables migrated successfully")
+}
+
+func genTablesDAO() {
+	g := gen.NewGenerator(gen.Config{
+		OutPath: "./internal/models",
+		Mode:    gen.WithoutContext | gen.WithDefaultQuery | gen.WithQueryInterface, // generate mode
+	})
+
+	g.UseDB(global.MySQL) // reuse your gorm db
+	g.GenerateModel("users")
+	g.Execute()
+
 }
