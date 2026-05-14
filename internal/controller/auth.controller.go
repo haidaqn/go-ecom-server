@@ -1,8 +1,11 @@
 package controller
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/haidaqn/go-ecommerce-backend-api/internal/service"
+	"github.com/haidaqn/go-ecommerce-backend-api/pkg/response"
 )
 
 type AuthController struct {
@@ -23,14 +26,10 @@ func (a *AuthController) Register(c *gin.Context) {
 
 	var req request
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+		response.ErrorResponse(c, response.CodeInvalidParams, err.Error())
 		return
 	}
 
-	success := a.authService.Register(req.Email, req.Password)
-	if success {
-		c.JSON(200, gin.H{"message": "Registration successful"})
-	} else {
-		c.JSON(500, gin.H{"message": "Registration failed"})
-	}
+	res := a.authService.Register(req.Email, req.Password)
+	c.JSON(http.StatusOK, res)
 }

@@ -7,9 +7,12 @@
 package wire
 
 import (
+	"github.com/haidaqn/go-ecommerce-backend-api/global"
 	"github.com/haidaqn/go-ecommerce-backend-api/internal/controller"
 	"github.com/haidaqn/go-ecommerce-backend-api/internal/repo"
 	"github.com/haidaqn/go-ecommerce-backend-api/internal/service"
+	"github.com/haidaqn/go-ecommerce-backend-api/thrid_party/sendmail"
+	"os"
 )
 
 // Injectors from auth.wire.go:
@@ -17,7 +20,19 @@ import (
 func InitAuthRouteHandler() (*controller.AuthController, error) {
 	iUserRepository := repo.NewUserRepository()
 	iUservices := service.NewUserService(iUserRepository)
-	iAuthService := service.NewAuthService(iUservices)
+	iRedisService := ProvideRedisService()
+	iMailService := ProvideMailService()
+	iAuthService := service.NewAuthService(iUservices, iRedisService, iMailService)
 	authController := controller.NewAuthController(iAuthService)
 	return authController, nil
+}
+
+// auth.wire.go:
+
+func ProvideRedisService() service.IRedisService {
+	return service.NewRedisService(global.Redis)
+}
+
+func ProvideMailService() sendmail.IMailService {
+	return sendmail.NewMailService(os.Getenv("RESEND_API_KEY"), os.Getenv("RESEND_FROM"))
 }

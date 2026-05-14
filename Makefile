@@ -7,3 +7,6 @@ run:
 
 run_wire:
 	wire $(APP_WIRE)
+
+# .PHONY: run  
+
