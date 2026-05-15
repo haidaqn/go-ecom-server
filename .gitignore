@@ -11,4 +11,4 @@ cmd/cli
 
 # các folder trong environment
 
-# /environment/*
+/environment/data
