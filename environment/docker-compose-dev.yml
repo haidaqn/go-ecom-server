@@ -76,7 +76,8 @@ services:
     restart: unless-stopped
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-      - ./data/prometheus_data:/prometheus
+      # Named volume avoids "permission denied" on Windows bind mounts (Prometheus runs as nobody)
+      - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
@@ -103,8 +104,13 @@ services:
       - GF_LOG_FILTERS=alerting.notifier.slack:debug alermanager:debug ngalert:debug
 
     volumes:
-      - ./grafana-storage:/var/lib/grafana
+      # Named volume avoids "GF_PATHS_DATA is not writable" on Windows bind mounts
+      - grafana_data:/var/lib/grafana
     ports:
       - "3002:3000"
     networks:
-      - pre-go-local-networks    
+      - pre-go-local-networks
+
+volumes:
+  prometheus_data:
+  grafana_data:
