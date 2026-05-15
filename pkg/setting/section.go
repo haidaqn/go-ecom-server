@@ -5,6 +5,7 @@ type Config struct {
 	MySQL  MySQLSetting  `mapstructure:"mysql"`
 	Logger LoggerSetting `mapstructure:"log"`
 	Redis  RedisSetting  `mapstructure:"redis"`
+	Kafka  KafkaSetting  `mapstructure:"kafka"`
 	STMP   SMTPSetting   `mapstructure:"smtp"`
 }
 
@@ -26,6 +27,11 @@ type RedisSetting struct {
 	Port     int    `mapstructure:"port"`
 	Password string `mapstructure:"password"`
 	Db       int    `mapstructure:"db"`
+}
+
+type KafkaSetting struct {
+	Host string `mapstructure:"host"`
+	Port int    `mapstructure:"port"`
 }
 
 type MySQLSetting struct {

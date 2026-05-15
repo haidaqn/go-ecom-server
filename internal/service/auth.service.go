@@ -7,7 +7,6 @@ import (
 	"github.com/haidaqn/go-ecommerce-backend-api/global"
 	"github.com/haidaqn/go-ecommerce-backend-api/internal/utils"
 	"github.com/haidaqn/go-ecommerce-backend-api/pkg/response"
-	"github.com/haidaqn/go-ecommerce-backend-api/thrid_party/sendmail"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -28,19 +27,19 @@ type IAuthService interface {
 type authService struct {
 	userService  IUservices
 	redisService IRedisService
-	mailService  sendmail.IMailService
+	kafkaService IKafkaService
 }
 
-func NewAuthService(userService IUservices, redisService IRedisService, mailService sendmail.IMailService) IAuthService {
+func NewAuthService(userService IUservices, redisService IRedisService, kafkaService IKafkaService) IAuthService {
 	return &authService{
 		userService:  userService,
 		redisService: redisService,
-		mailService:  mailService,
+		kafkaService: kafkaService,
 	}
 }
 
 func (a *authService) Register(email string, password string) RegisterResult {
-	if a.userService == nil || a.redisService == nil || a.mailService == nil {
+	if a.userService == nil || a.redisService == nil || a.kafkaService == nil {
 		return RegisterResult{
 			Code:    response.CodeInternalServer,
 			Message: "Hệ thống chưa sẵn sàng. Vui lòng thử lại sau.",
@@ -113,10 +112,22 @@ func (a *authService) Register(email string, password string) RegisterResult {
 		global.Logger.Info("user registered", zap.String("email", normalizedEmail))
 	}
 
-	if err := a.mailService.SendMail([]string{normalizedEmail}, otpStr); err != nil {
+	// if err := a.mailService.SendMail([]string{normalizedEmail}, otpStr); err != nil {
+	// 	a.redisService.Delete(otpKey)
+	// 	if global.Logger != nil {
+	// 		global.Logger.Error("failed to send OTP email", zap.String("email", normalizedEmail), zap.Error(err))
+	// 	}
+	// 	return RegisterResult{
+	// 		Code:    response.CodeSendOTPErr,
+	// 		Message: "Không thể gửi email xác thực. Vui lòng thử lại sau.",
+	// 		Data:    nil,
+	// 	}
+	// }
+
+	if err := a.kafkaService.PublishOTPEmail(normalizedEmail, otpStr); err != nil {
 		a.redisService.Delete(otpKey)
 		if global.Logger != nil {
-			global.Logger.Error("failed to send OTP email", zap.String("email", normalizedEmail), zap.Error(err))
+			global.Logger.Error("failed to publish OTP email event", zap.String("email", normalizedEmail), zap.Error(err))
 		}
 		return RegisterResult{
 			Code:    response.CodeSendOTPErr,

@@ -2,11 +2,10 @@ package initialize
 
 func Run() {
 	LoadConfig()
-	// m := global.Config.MySQL
-	// fmt.Println("loaded configuration mysql:", m)
 	InitLogger()
 	InitMySql()
 	InitRedis()
+	InitKafka()
 
 	r := InitRouter()
 	r.Run(":8888")
