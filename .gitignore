@@ -5,3 +5,10 @@ logs
 storages/*
 
 *.exe
+
+docs
+cmd/cli
+
+# các folder trong environment
+
+/environment/*
